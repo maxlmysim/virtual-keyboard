@@ -283,4 +283,87 @@ a {
   color: inherit;
 }
 
+.keyboard {
+  margin: 0 auto;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+}
+
+.keyboard_line-one,
+.keyboard_line-two,
+.keyboard_line-three,
+.keyboard_line-four,
+.keyboard_line-five {
+  display: flex;
+  gap: 1vw;
+}
+
+.keyboard_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #3a424e;
+  color: #ede6e3;
+  border-radius: 1vw;
+  height: 5vw;
+  font-size: 2vw;
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.keyboard_button-sub1 {
+  font-size: 1.5vw;
+  width: 100%;
+  margin-left: 1rem;
+}
+
+.double-button {
+  flex-direction: column;
+}
+
+.backspace {
+  flex-grow: 2;
+}
+
+.button-space {
+  flex-grow: 10;
+}
+
+.button-ctrl {
+  flex-grow: 2;
+}
+
+.button-shift:last-child,
+.button-up-arrow,
+.button-left-arrow,
+.button-right-arrow,
+.button-down-arrow {
+  flex-grow: 0;
+  width: 6vw;
+}
+
+.special-button {
+  background: #1c232e;
+  color: #737168;
+}
+
+.button-up-arrow,
+.button-left-arrow,
+.button-right-arrow,
+.button-down-arrow {
+  font-size: 0;
+}
+
+.button-up-arrow:before {
+  content: "1";
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /*# sourceMappingURL=main.css.map */
