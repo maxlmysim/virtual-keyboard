@@ -71,12 +71,25 @@ color: $color-special-button-text;
   font-size: 0;
 }
 
+.button-up-arrow:before,
+.button-left-arrow:before,
+.button-right-arrow:before,
+.button-down-arrow:before {
+  font-size: 2rem;
+  font-weight: 900;
+}
 .button-up-arrow:before {
-  content: "1";
-  width: 100%;
-  height: 100%;
-  font-size: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  content: "↑";
+}
+
+.button-down-arrow:before {
+  content: "↓";
+}
+
+.button-right-arrow:before {
+  content: "→";
+}
+
+.button-left-arrow:before {
+  content: "←";
 }
