@@ -284,6 +284,10 @@ a {
   color: inherit;
 }
 
+.hidden {
+  display: none;
+}
+
 .keyboard {
   margin: 0 auto;
   width: 95%;
@@ -361,7 +365,7 @@ a {
 .button-left-arrow:before,
 .button-right-arrow:before,
 .button-down-arrow:before {
-  font-size: 2rem;
+  font-size: 2vw;
   font-weight: 900;
 }
 
