@@ -292,16 +292,16 @@ a {
   gap: 1vw;
 }
 
-.keyboard_line-one,
-.keyboard_line-two,
-.keyboard_line-three,
-.keyboard_line-four,
-.keyboard_line-five {
+.keyboard__line-one,
+.keyboard__line-two,
+.keyboard__line-three,
+.keyboard__line-four,
+.keyboard__line-five {
   display: flex;
   gap: 1vw;
 }
 
-.keyboard_button {
+.keyboard__button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -314,7 +314,7 @@ a {
   cursor: pointer;
 }
 
-.keyboard_button-sub1 {
+.keyboard__button-sub1 {
   font-size: 1.5vw;
   width: 100%;
   margin-left: 1rem;
@@ -379,6 +379,10 @@ a {
 
 .button-left-arrow:before {
   content: "←";
+}
+
+.keyboard__button_press {
+  background: #5571ee;
 }
 
 /*# sourceMappingURL=main.css.map */
