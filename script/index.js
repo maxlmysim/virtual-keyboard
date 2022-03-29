@@ -84,35 +84,35 @@ function clickButton(event, query) {
 }
 
 function clickButtonShift(event, query) {
-        if (query === 'down') {
-            console.log(1);
+    if (query === 'down') {
+        console.log(1);
 
-            listButtons.forEach(item => {
-                if (item.classList.contains('double-button')) {
-                    item.lastChild.classList.add('hidden');
-                }
-                if (item.classList.contains('keyboard__button') &&
-                    !item.classList.contains('double-button') &&
-                    !item.classList.contains('special-button')) {
-                    item.textContent = item.textContent.toUpperCase();
-                }
-            });
-        }
+        listButtons.forEach(item => {
+            if (item.classList.contains('double-button')) {
+                item.lastChild.classList.add('hidden');
+            }
+            if (item.classList.contains('keyboard__button') &&
+                !item.classList.contains('double-button') &&
+                !item.classList.contains('special-button')) {
+                item.textContent = item.textContent.toUpperCase();
+            }
+        });
+    }
 
-        if (query === 'up') {
-            console.log(2);
+    if (query === 'up') {
+        console.log(2);
 
-            listButtons.forEach(item => {
-                if (item.classList.contains('double-button')) {
-                    item.lastChild.classList.remove('hidden');
-                }
-                if (item.classList.contains('keyboard__button') &&
-                    !item.classList.contains('double-button') &&
-                    !item.classList.contains('special-button')) {
-                    item.textContent = item.textContent.toLowerCase();
-                }
-            });
-        }
+        listButtons.forEach(item => {
+            if (item.classList.contains('double-button')) {
+                item.lastChild.classList.remove('hidden');
+            }
+            if (item.classList.contains('keyboard__button') &&
+                !item.classList.contains('double-button') &&
+                !item.classList.contains('special-button')) {
+                item.textContent = item.textContent.toLowerCase();
+            }
+        });
+    }
 }
 
 // function clickCapsLock() {
@@ -137,9 +137,17 @@ function clickButtonShift(event, query) {
 // }
 
 window.addEventListener('keydown', function (event) {
-    console.log(event);
 
-    if(event.getModifierState('Shift')) clickButtonShift(event.target, 'down')
+    if (event.getModifierState('Alt') && event.getModifierState('Shift')) {
+        if(currentLang === 'en') {
+            // changeLang('ru');
+        } else {
+            // changeLang('en');
+        }
+    }
+
+
+    if (event.getModifierState('Shift')) clickButtonShift(event.target, 'down');
 
     listButtons.find(item => {
         if (+item.dataset.keyCode === event.keyCode) {
@@ -152,8 +160,8 @@ window.addEventListener('keydown', function (event) {
 window.addEventListener('keyup', function (event) {
 
     console.log(event);
-    if(event.getModifierState('Shift')) {
-        clickButtonShift(event.target, 'up')
+    if (event.getModifierState('Shift')) {
+        clickButtonShift(event.target, 'up');
         console.log(2);
 
     }
