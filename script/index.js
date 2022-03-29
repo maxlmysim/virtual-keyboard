@@ -76,28 +76,17 @@ let listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
 function clickButton(event, query) {
     if (query === 'down') {
         event.classList.add('keyboard__button_press');
-        if (event.classList.contains('special-button')) {
-            clickSpecialButton(event, 'down');
-        }
     }
 
     if (query === 'up') {
         event.classList.remove('keyboard__button_press');
-        if (event.classList.contains('special-button')) {
-            clickSpecialButton(event, 'up');
-        }
     }
 }
 
-function clickSpecialButton(event, query) {
-
-    // if (event.classList.contains('button-caps-lock')) {
-    //     isCapsLock = !isCapsLock;
-    //     clickCapsLock()
-    // }
-
-    if (event.classList.contains('button-shift')) {
+function clickButtonShift(event, query) {
         if (query === 'down') {
+            console.log(1);
+
             listButtons.forEach(item => {
                 if (item.classList.contains('double-button')) {
                     item.lastChild.classList.add('hidden');
@@ -111,6 +100,8 @@ function clickSpecialButton(event, query) {
         }
 
         if (query === 'up') {
+            console.log(2);
+
             listButtons.forEach(item => {
                 if (item.classList.contains('double-button')) {
                     item.lastChild.classList.remove('hidden');
@@ -121,9 +112,7 @@ function clickSpecialButton(event, query) {
                     item.textContent = item.textContent.toLowerCase();
                 }
             });
-            // clickCapsLock()
         }
-    }
 }
 
 // function clickCapsLock() {
@@ -148,15 +137,27 @@ function clickSpecialButton(event, query) {
 // }
 
 window.addEventListener('keydown', function (event) {
+    console.log(event);
+
+    if(event.getModifierState('Shift')) clickButtonShift(event.target, 'down')
+
     listButtons.find(item => {
         if (+item.dataset.keyCode === event.keyCode) {
             clickButton(item, 'down');
             return true;
         }
     });
-});
 
+});
 window.addEventListener('keyup', function (event) {
+
+    console.log(event);
+    if(event.getModifierState('Shift')) {
+        clickButtonShift(event.target, 'up')
+        console.log(2);
+
+    }
+
     listButtons.find(item => {
         if (+item.dataset.keyCode === event.keyCode) {
             clickButton(item, 'up');
@@ -170,6 +171,8 @@ keyboard.addEventListener('mousedown', function (event) {
         clickButton(event.target.parentNode, 'down');
         return;
     }
+
+
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'down');
 });
@@ -179,7 +182,11 @@ keyboard.addEventListener('mouseup', function (event) {
         clickButton(event.target.parentNode, 'up');
         return;
     }
+
+
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'up');
 });
+
+
 
