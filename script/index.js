@@ -41,12 +41,17 @@ let specialButtonList = ['backspace', 'tab', 'ENTER', 'DEL', 'Ctrl', 'space', 'S
 let isShiftPressed = false;
 let isAltPressed = false;
 let isCapsLock = false;
-let currentLang = 'en';
+let currentLang = 'ru';
 let listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
 
-let keysEn = Object.entries(i18Obj.en);
-let keysRu = Object.entries(i18Obj.ru);
+
+let keysLang = Object.entries(i18Obj[currentLang]);
 let keyboard = document.createElement('div');
+
+let textArea = document.createElement('textarea');
+textArea.className = 'text-area'
+textArea.autofocus = true
+document.body.appendChild(textArea);
 
 function createKeyboard(lang) {
     keyboard.innerHTML = '';
@@ -76,7 +81,7 @@ function createKeyboard(lang) {
     listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
 }
 
-createKeyboard(keysRu);
+createKeyboard(keysLang);
 
 function clickButton(event, query) {
     if (query === 'down') {
@@ -144,6 +149,18 @@ window.addEventListener('keydown', function (event) {
     listButtons.find(item => {
         if (+item.dataset.keyCode === event.keyCode) {
             clickButton(item, 'down');
+
+            if(!item.classList.contains('special-button')){
+                if (item.classList.contains('double-button')) {
+                    if( isShiftPressed) {
+                        textArea.value += item.firstChild.textContent;
+                        return true;
+                    }
+                    textArea.value += item.lastChild.textContent;
+                    return true;
+                }
+                textArea.value += item.textContent;
+            }
             return true;
         }
     });
@@ -151,11 +168,12 @@ window.addEventListener('keydown', function (event) {
     if (event.getModifierState('Alt') && event.getModifierState('Shift')) {
         if (currentLang === 'en') {
             currentLang = 'ru';
-            createKeyboard(keysRu);
-
+            keysLang = Object.entries(i18Obj[currentLang]);
+            createKeyboard(keysLang);
         } else {
             currentLang = 'en';
-            createKeyboard(keysEn);
+            keysLang = Object.entries(i18Obj[currentLang]);
+            createKeyboard(keysLang);
         }
 
         listButtons.find(item => {
@@ -175,6 +193,7 @@ window.addEventListener('keydown', function (event) {
 
     if (event.key === 'Shift') {
         clickButtonShift(event.target, 'down');
+        isShiftPressed = !isShiftPressed
     }
 
     if (event.key === 'CapsLock') {
@@ -190,6 +209,13 @@ window.addEventListener('keydown', function (event) {
         event.preventDefault();
     }
 
+    if(event.keyCode === 8) {
+        textArea.value = textArea.value.split('').splice(0, textArea.value.length - 1).join('')
+    }
+
+    if(event.keyCode === 32) {
+        textArea.value += ' '
+    }
 
 });
 
@@ -203,6 +229,7 @@ window.addEventListener('keyup', function (event) {
 
     if (event.key === 'Shift') {
         clickButtonShift(event.target, 'up');
+        isShiftPressed = !isShiftPressed
     }
 
 });
@@ -212,7 +239,6 @@ keyboard.addEventListener('mousedown', function (event) {
         clickButton(event.target.parentNode, 'down');
         return;
     }
-
 
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'down');
@@ -224,14 +250,12 @@ keyboard.addEventListener('mouseup', function (event) {
         return;
     }
 
-
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'up');
 });
 
 
-let textArea = document.createElement('textarea');
-textArea.className = 'text-area'
-document.body.appendChild(textArea);
+
+
 
 

@@ -392,7 +392,7 @@ a {
 .text-area {
   width: 90%;
   height: 200px;
-  margin: 50px auto 0;
+  margin: 50px auto;
   display: block;
   font-size: 25px;
 }
