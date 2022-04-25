@@ -41,7 +41,7 @@ let specialButtonList = ['backspace', 'tab', 'ENTER', 'DEL', 'Ctrl', 'space', 'S
 let isShiftPressed = false;
 let isAltPressed = false;
 let isCapsLock = false;
-let currentLang = 'ru';
+let currentLang = 'en';
 let listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
 
 
@@ -86,11 +86,13 @@ createKeyboard(keysLang);
 function clickButton(event, query) {
     if (query === 'down') {
         event.classList.add('keyboard__button_press');
+
     }
 
     if (query === 'up') {
         event.classList.remove('keyboard__button_press');
     }
+    textArea.focus()
 }
 
 function clickButtonShift(event, query) {
@@ -149,18 +151,6 @@ window.addEventListener('keydown', function (event) {
     listButtons.find(item => {
         if (+item.dataset.keyCode === event.keyCode) {
             clickButton(item, 'down');
-
-            if(!item.classList.contains('special-button')){
-                if (item.classList.contains('double-button')) {
-                    if( isShiftPressed) {
-                        textArea.value += item.firstChild.textContent;
-                        return true;
-                    }
-                    textArea.value += item.lastChild.textContent;
-                    return true;
-                }
-                textArea.value += item.textContent;
-            }
             return true;
         }
     });
@@ -213,10 +203,14 @@ window.addEventListener('keydown', function (event) {
         textArea.value = textArea.value.split('').splice(0, textArea.value.length - 1).join('')
     }
 
+    //space
     if(event.keyCode === 32) {
-        textArea.value += ' '
+        let cursor = textArea.selectionStart
+        let text = textArea.value
+        text = text.split('').slice(0,cursor).join('') + ' ' + text.split('').slice(-cursor).join('')
+        textArea.value = text
     }
-
+    // textArea.focus()
 });
 
 window.addEventListener('keyup', function (event) {
@@ -231,7 +225,6 @@ window.addEventListener('keyup', function (event) {
         clickButtonShift(event.target, 'up');
         isShiftPressed = !isShiftPressed
     }
-
 });
 
 keyboard.addEventListener('mousedown', function (event) {
@@ -242,6 +235,47 @@ keyboard.addEventListener('mousedown', function (event) {
 
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'down');
+
+    if(!event.target.classList.contains('special-button')){
+
+        if (event.target.classList.contains('double-button')) {
+            if( isShiftPressed) {
+                textArea.value += event.target.firstChild.textContent;
+                return true;
+            }
+            textArea.value += event.target.lastChild.textContent;
+            return true;
+        }
+        textArea.value += event.target.textContent;
+    }
+
+    if(event.target.classList.contains('button-shift')) {
+        clickButtonShift(event.target, 'down');
+        isShiftPressed = !isShiftPressed
+    }
+
+    if (event.target.classList.contains('button-caps-lock') ) {
+        isCapsLock = !isCapsLock;
+        if (isCapsLock) {
+            clickButtonCapsLock(event.target, 'down');
+        } else {
+            clickButtonCapsLock(event.target, 'up');
+        }
+    }
+
+    if(event.target.classList.contains('button-backspace')) {
+        textArea.value = textArea.value.split('').splice(0, textArea.value.length - 1).join('')
+    }
+
+    if(event.target.classList.contains('button-space')) {
+        let cursorStart = textArea.selectionStart
+        let cursorEnd = textArea.value.length - cursorStart
+        let text = textArea.value
+        text = text.split('').slice(0,cursorStart).join('') + ' ' + text.split('').slice(-cursorEnd).join('')
+        textArea.value = text
+        textArea.selectionStart = cursorStart
+    }
+    // textArea.focus()
 });
 
 keyboard.addEventListener('mouseup', function (event) {
@@ -252,6 +286,11 @@ keyboard.addEventListener('mouseup', function (event) {
 
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'up');
+
+    if(event.target.classList.contains('button-shift')) {
+        clickButtonShift(event.target, 'up');
+        isShiftPressed = !isShiftPressed
+    }
 });
 
 
