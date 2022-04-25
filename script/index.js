@@ -72,13 +72,11 @@ function createKeyboard(lang) {
 
     keyboard.className = 'keyboard';
     keyboard.append(lineOne, lineTwo, lineThree, lineFour, lineFive);
-    document.body.innerHTML = '';
     document.body.appendChild(keyboard);
     listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
 }
 
 createKeyboard(keysRu);
-
 
 function clickButton(event, query) {
     if (query === 'down') {
@@ -231,5 +229,11 @@ keyboard.addEventListener('mouseup', function (event) {
     clickButton(event.target, 'up');
 });
 
+
+let textArea = document.createElement('textarea');
+textArea.className = 'text-area'
+textArea.rows = '30';
+textArea.cols = '150'
+document.body.appendChild(textArea);
 
 
