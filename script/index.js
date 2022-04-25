@@ -232,8 +232,6 @@ keyboard.addEventListener('mouseup', function (event) {
 
 let textArea = document.createElement('textarea');
 textArea.className = 'text-area'
-textArea.rows = '30';
-textArea.cols = '150'
 document.body.appendChild(textArea);
 
 
