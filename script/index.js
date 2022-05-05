@@ -216,24 +216,35 @@ window.addEventListener('keydown', function (event) {
         if (positionCursor === 0) return;
         positionCursor--;
         textArea.selectionEnd = textArea.selectionStart = positionCursor;
-        return;
     }
 
     if (event.key === 'ArrowRight') {
         if (positionCursor >= textArea.value.length) return;
         positionCursor++;
         textArea.selectionEnd = textArea.selectionStart = positionCursor;
-        return;
     }
 
-    listButtons.find(item => {
-        if (+item.dataset.keyCode === event.keyCode) {
-            clickButton(item, 'down');
-            inputText(item);
-            return true;
-        }
-    });
-
+    if (event.code === 'AltRight' ||
+        event.code === 'ControlRight' ||
+        event.code === 'ShiftRight') {
+        listButtons.reverse().find(item => {
+            if (+item.dataset.keyCode === event.keyCode) {
+                clickButton(item, 'down');
+                inputText(item);
+                return true;
+            }
+        });
+        listButtons.reverse()
+    } else {
+        listButtons.find(item => {
+            console.log(1);
+            if (+item.dataset.keyCode === event.keyCode) {
+                clickButton(item, 'down');
+                inputText(item);
+                return true;
+            }
+        });
+    }
 
     if (event.key === 'Shift') {
         if (isCapsLock) {
@@ -283,18 +294,33 @@ window.addEventListener('keydown', function (event) {
         textArea.value = textArea.value.slice(0, positionCursor - 1) + textArea.value.slice(positionCursor, textArea.value.length);
         positionCursor--;
     }
-    console.log(event.key);
+    console.log(event.code);
 });
 
 window.addEventListener('keyup', function (event) {
     textArea.selectionEnd = textArea.selectionStart = positionCursor;
 
-    listButtons.find(item => {
-        if (+item.dataset.keyCode === event.keyCode) {
-            clickButton(item, 'up');
-            return true;
-        }
-    });
+    if (event.code === 'AltRight' ||
+        event.code === 'ControlRight' ||
+        event.code === 'ShiftRight') {
+        listButtons.reverse().find(item => {
+            if (+item.dataset.keyCode === event.keyCode) {
+                clickButton(item, 'up');
+                inputText(item);
+                return true;
+            }
+        });
+        listButtons.reverse()
+    } else {
+        listButtons.find(item => {
+            console.log(1);
+            if (+item.dataset.keyCode === event.keyCode) {
+                clickButton(item, 'up');
+                inputText(item);
+                return true;
+            }
+        });
+    }
 
     if (event.key === 'Shift') {
         if (isCapsLock) {
@@ -318,13 +344,13 @@ keyboard.addEventListener('mousedown', function (event, handler) {
             if (item instanceof Element)
                 if (item.classList.contains('double-button')) {
                     if (isShiftPressed) {
-                        textArea.value += item.firstChild.textContent;
+                        inputTextToTextarea(item.firstChild.textContent);
                     } else {
-                        textArea.value += item.lastChild.textContent;
+                        inputTextToTextarea(item.lastChild.textContent);
                     }
                     return true;
                 } else if (item.classList.contains('keyboard__button')) {
-                    textArea.value += event.target.textContent;
+                    inputTextToTextarea(event.target.textContent);
                     return true;
                 }
         });
@@ -340,7 +366,11 @@ keyboard.addEventListener('mousedown', function (event, handler) {
 
 
     if (event.target.classList.contains('button-shift')) {
-        clickButtonShift(event.target, 'down');
+        if (isCapsLock) {
+            clickButtonShift(event.target, 'up');
+        } else {
+            clickButtonShift(event.target, 'down');
+        }
         isShiftPressed = true;
         changeLang();
     }
@@ -360,23 +390,33 @@ keyboard.addEventListener('mousedown', function (event, handler) {
     }
 
     if (event.target.classList.contains('button-backspace')) {
-        textArea.value = textArea.value.split('').splice(0, textArea.value.length - 1).join('');
+        if (positionCursor === 0) return;
+        textArea.value = textArea.value.slice(0, positionCursor - 1) + textArea.value.slice(positionCursor, textArea.value.length);
+        positionCursor--;
     }
 
     if (event.target.classList.contains('button-enter')) {
-        textArea.value = textArea.value + '\r\n';
+        inputTextToTextarea('\r\n');
+    }
+
+    if (event.target.classList.contains('button-del')) {
+        if (positionCursor >= textArea.value.length) return;
+        textArea.value = textArea.value.slice(0, positionCursor) + textArea.value.slice(positionCursor + 1, textArea.value.length);
     }
 
     if (event.target.classList.contains('button-tab')) {
-        textArea.value += '  ';
+        inputTextToTextarea('  ');
+        positionCursor++;
     }
 
     if (event.target.classList.contains('button-space')) {
-        textArea.value += ' ';
+        inputTextToTextarea(' ');
     }
 });
 
 keyboard.addEventListener('mouseup', function (event) {
+    textArea.selectionEnd = textArea.selectionStart = positionCursor;
+
     if (event.target.classList.contains('keyboard__button-sub')) {
         clickButton(event.target.parentNode, 'up');
         return;
@@ -386,12 +426,27 @@ keyboard.addEventListener('mouseup', function (event) {
     clickButton(event.target, 'up');
 
     if (event.target.classList.contains('button-shift')) {
-        clickButtonShift(event.target, 'up');
+        if (isCapsLock) {
+            clickButtonShift(event.target, 'down');
+        } else {
+            clickButtonShift(event.target, 'up');
+        }
         isShiftPressed = false;
     }
 
     if (event.target.classList.contains('button-alt')) {
         isAltPressed = false;
+    }
+
+    if (event.target.classList.contains('button-left-arrow')) {
+        if (positionCursor === 0) return;
+        positionCursor--;
+        textArea.selectionEnd = textArea.selectionStart = positionCursor;
+    }
+    if (event.target.classList.contains('button-right-arrow')) {
+        if (positionCursor >= textArea.value.length) return;
+        positionCursor++;
+        textArea.selectionEnd = textArea.selectionStart = positionCursor;
     }
 
 });
