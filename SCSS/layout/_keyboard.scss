@@ -26,6 +26,8 @@
   font-size: 2vw;
   flex-grow: 1;
   cursor: pointer;
+  transition: all 0.1s;
+
 }
 
 .keyboard__button-sub1 {
@@ -96,4 +98,5 @@ color: $color-special-button-text;
 
 .keyboard__button_press {
   background: $color-press-button;
+  transition: all 0.1s;
 }

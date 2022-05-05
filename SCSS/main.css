@@ -316,6 +316,7 @@ a {
   font-size: 2vw;
   flex-grow: 1;
   cursor: pointer;
+  transition: all 0.1s;
 }
 
 .keyboard__button-sub1 {
@@ -387,6 +388,7 @@ a {
 
 .keyboard__button_press {
   background: #5571ee;
+  transition: all 0.1s;
 }
 
 .text-area {
