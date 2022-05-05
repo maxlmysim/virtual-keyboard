@@ -181,7 +181,7 @@ function inputText(event) {
     }
 }
 
-function changeLang() {
+function changeLang(side) {
     if (isAltPressed && isShiftPressed) {
         if (currentLang === 'en') {
             currentLang = 'ru';
@@ -194,19 +194,34 @@ function changeLang() {
         }
 
         listButtons.find(item => {
+            if (+item.dataset.keyCode === 18) {
+                clickButton(item, 'down');
+                return true;
+            }
+        });
+
+        if (side === 'right') {
+            listButtons.reverse();
+            listButtons.find(item => {
+                if (+item.dataset.keyCode === 16) {
+                    clickButton(item, 'down');
+                    return true;
+                }
+            });
+
+            listButtons.reverse();
+            return;
+        }
+
+        listButtons.find(item => {
             if (+item.dataset.keyCode === 16) {
                 clickButton(item, 'down');
                 return true;
             }
         });
 
-        listButtons.find(item => {
-            if (+item.dataset.keyCode === 18) {
-                clickButton(item, 'down');
-                return true;
-            }
-        });
     }
+
     localStorage.setItem('lang', currentLang);
 }
 
@@ -223,6 +238,27 @@ window.addEventListener('keydown', function (event) {
         positionCursor++;
         textArea.selectionEnd = textArea.selectionStart = positionCursor;
     }
+    if (event.key === 'Shift') {
+        if (isCapsLock) {
+            clickButtonShift(event.target, 'up');
+        } else {
+            clickButtonShift(event.target, 'down');
+        }
+        isShiftPressed = true;
+
+        if (event.code === 'ShiftRight') {
+            changeLang('right');
+        } else {
+            changeLang();
+        }
+    }
+
+    if (event.key === 'Alt') {
+        if (event.code === 'AltLeft') {
+            isAltPressed = true;
+            changeLang();
+        }
+    }
 
     if (event.code === 'AltRight' ||
         event.code === 'ControlRight' ||
@@ -234,10 +270,9 @@ window.addEventListener('keydown', function (event) {
                 return true;
             }
         });
-        listButtons.reverse()
+        listButtons.reverse();
     } else {
         listButtons.find(item => {
-            console.log(1);
             if (+item.dataset.keyCode === event.keyCode) {
                 clickButton(item, 'down');
                 inputText(item);
@@ -246,20 +281,6 @@ window.addEventListener('keydown', function (event) {
         });
     }
 
-    if (event.key === 'Shift') {
-        if (isCapsLock) {
-            clickButtonShift(event.target, 'up');
-        } else {
-            clickButtonShift(event.target, 'down');
-        }
-        isShiftPressed = true;
-        changeLang();
-    }
-
-    if (event.key === 'Alt') {
-        isAltPressed = true;
-        changeLang();
-    }
 
     if (event.key === 'Enter') {
         inputTextToTextarea('\r\n');
@@ -310,10 +331,9 @@ window.addEventListener('keyup', function (event) {
                 return true;
             }
         });
-        listButtons.reverse()
+        listButtons.reverse();
     } else {
         listButtons.find(item => {
-            console.log(1);
             if (+item.dataset.keyCode === event.keyCode) {
                 clickButton(item, 'up');
                 inputText(item);
