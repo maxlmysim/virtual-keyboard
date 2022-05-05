@@ -41,16 +41,18 @@ let specialButtonList = ['backspace', 'tab', 'ENTER', 'DEL', 'Ctrl', 'space', 'S
 let isShiftPressed = false;
 let isAltPressed = false;
 let isCapsLock = false;
-let currentLang = 'en';
+let currentLang = localStorage.getItem('lang') || 'en';
 let listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
+let positionCursor = 0;
 
 
 let keysLang = Object.entries(i18Obj[currentLang]);
 let keyboard = document.createElement('div');
 
 let textArea = document.createElement('textarea');
-textArea.className = 'text-area'
-textArea.autofocus = true
+textArea.className = 'text-area';
+textArea.autofocus = true;
+textArea.placeholder = 'Чтобы сменить язык нажмите Alt+Shift';
 document.body.appendChild(textArea);
 
 function createKeyboard(lang) {
@@ -92,7 +94,7 @@ function clickButton(event, query) {
     if (query === 'up') {
         event.classList.remove('keyboard__button_press');
     }
-    textArea.focus()
+    textArea.focus();
 }
 
 function clickButtonShift(event, query) {
@@ -145,17 +147,42 @@ function clickButtonCapsLock(event, query) {
     }
 }
 
+function inputTextToTextarea(value) {
+    textArea.value = textArea.value.slice(0, positionCursor) + value + textArea.value.slice(positionCursor, textArea.value.length);
+    positionCursor++;
+}
 
-window.addEventListener('keydown', function (event) {
+function inputText(event) {
+    if (event.classList.contains('button-down-arrow')) {
+        inputTextToTextarea('↓');
+        return;
+    }
 
-    listButtons.find(item => {
-        if (+item.dataset.keyCode === event.keyCode) {
-            clickButton(item, 'down');
-            return true;
+    if (event.classList.contains('button-up-arrow')) {
+        inputTextToTextarea('↑');
+        return;
+    }
+
+    if (event.classList.contains('special-button')) {
+        return;
+    }
+
+    if (event.classList.contains('double-button')) {
+        if (isShiftPressed) {
+            inputTextToTextarea(event.firstChild.textContent);
+        } else {
+            inputTextToTextarea(event.lastChild.textContent);
         }
-    });
+        return;
+    }
 
-    if (event.getModifierState('Alt') && event.getModifierState('Shift')) {
+    if (event.classList.contains('keyboard__button')) {
+        inputTextToTextarea(event.textContent);
+    }
+}
+
+function changeLang() {
+    if (isAltPressed && isShiftPressed) {
         if (currentLang === 'en') {
             currentLang = 'ru';
             keysLang = Object.entries(i18Obj[currentLang]);
@@ -180,10 +207,51 @@ window.addEventListener('keydown', function (event) {
             }
         });
     }
+    localStorage.setItem('lang', currentLang);
+}
+
+window.addEventListener('keydown', function (event) {
+    event.preventDefault();
+    if (event.key === 'ArrowLeft') {
+        if (positionCursor === 0) return;
+        positionCursor--;
+        textArea.selectionEnd = textArea.selectionStart = positionCursor;
+        return;
+    }
+
+    if (event.key === 'ArrowRight') {
+        if (positionCursor >= textArea.value.length) return;
+        positionCursor++;
+        textArea.selectionEnd = textArea.selectionStart = positionCursor;
+        return;
+    }
+
+    listButtons.find(item => {
+        if (+item.dataset.keyCode === event.keyCode) {
+            clickButton(item, 'down');
+            inputText(item);
+            return true;
+        }
+    });
+
 
     if (event.key === 'Shift') {
-        clickButtonShift(event.target, 'down');
-        isShiftPressed = !isShiftPressed
+        if (isCapsLock) {
+            clickButtonShift(event.target, 'up');
+        } else {
+            clickButtonShift(event.target, 'down');
+        }
+        isShiftPressed = true;
+        changeLang();
+    }
+
+    if (event.key === 'Alt') {
+        isAltPressed = true;
+        changeLang();
+    }
+
+    if (event.key === 'Enter') {
+        inputTextToTextarea('\r\n');
     }
 
     if (event.key === 'CapsLock') {
@@ -195,25 +263,32 @@ window.addEventListener('keydown', function (event) {
         }
     }
 
-    if (event.keyCode === 9 || event.keyCode === 18) {
-        event.preventDefault();
-    }
-
-    if(event.keyCode === 8) {
-        textArea.value = textArea.value.split('').splice(0, textArea.value.length - 1).join('')
-    }
-
     //space
-    if(event.keyCode === 32) {
-        let cursor = textArea.selectionStart
-        let text = textArea.value
-        text = text.split('').slice(0,cursor).join('') + ' ' + text.split('').slice(-cursor).join('')
-        textArea.value = text
+    if (event.keyCode === 32) {
+        inputTextToTextarea(' ');
     }
-    // textArea.focus()
+
+    if (event.key === 'Tab') {
+        inputTextToTextarea('  ');
+        positionCursor++;
+    }
+
+    if (event.key === 'Delete') {
+        if (positionCursor >= textArea.value.length) return;
+        textArea.value = textArea.value.slice(0, positionCursor) + textArea.value.slice(positionCursor + 1, textArea.value.length);
+    }
+
+    if (event.key === 'Backspace') {
+        if (positionCursor === 0) return;
+        textArea.value = textArea.value.slice(0, positionCursor - 1) + textArea.value.slice(positionCursor, textArea.value.length);
+        positionCursor--;
+    }
+    console.log(event.key);
 });
 
 window.addEventListener('keyup', function (event) {
+    textArea.selectionEnd = textArea.selectionStart = positionCursor;
+
     listButtons.find(item => {
         if (+item.dataset.keyCode === event.keyCode) {
             clickButton(item, 'up');
@@ -222,12 +297,39 @@ window.addEventListener('keyup', function (event) {
     });
 
     if (event.key === 'Shift') {
+        if (isCapsLock) {
+            clickButtonShift(event.target, 'down');
+        } else {
+            clickButtonShift(event.target, 'up');
+        }
+        isShiftPressed = false;
+    }
+
+    if (event.key === 'Alt') {
         clickButtonShift(event.target, 'up');
-        isShiftPressed = !isShiftPressed
+        isAltPressed = false;
     }
 });
 
-keyboard.addEventListener('mousedown', function (event) {
+keyboard.addEventListener('mousedown', function (event, handler) {
+
+    if (!event.target.classList.contains('special-button')) {
+        event.path.find(item => {
+            if (item instanceof Element)
+                if (item.classList.contains('double-button')) {
+                    if (isShiftPressed) {
+                        textArea.value += item.firstChild.textContent;
+                    } else {
+                        textArea.value += item.lastChild.textContent;
+                    }
+                    return true;
+                } else if (item.classList.contains('keyboard__button')) {
+                    textArea.value += event.target.textContent;
+                    return true;
+                }
+        });
+    }
+
     if (event.target.classList.contains('keyboard__button-sub')) {
         clickButton(event.target.parentNode, 'down');
         return;
@@ -236,25 +338,19 @@ keyboard.addEventListener('mousedown', function (event) {
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'down');
 
-    if(!event.target.classList.contains('special-button')){
 
-        if (event.target.classList.contains('double-button')) {
-            if( isShiftPressed) {
-                textArea.value += event.target.firstChild.textContent;
-                return true;
-            }
-            textArea.value += event.target.lastChild.textContent;
-            return true;
-        }
-        textArea.value += event.target.textContent;
-    }
-
-    if(event.target.classList.contains('button-shift')) {
+    if (event.target.classList.contains('button-shift')) {
         clickButtonShift(event.target, 'down');
-        isShiftPressed = !isShiftPressed
+        isShiftPressed = true;
+        changeLang();
     }
 
-    if (event.target.classList.contains('button-caps-lock') ) {
+    if (event.target.classList.contains('button-alt')) {
+        isAltPressed = true;
+        changeLang();
+    }
+
+    if (event.target.classList.contains('button-caps-lock')) {
         isCapsLock = !isCapsLock;
         if (isCapsLock) {
             clickButtonCapsLock(event.target, 'down');
@@ -263,19 +359,21 @@ keyboard.addEventListener('mousedown', function (event) {
         }
     }
 
-    if(event.target.classList.contains('button-backspace')) {
-        textArea.value = textArea.value.split('').splice(0, textArea.value.length - 1).join('')
+    if (event.target.classList.contains('button-backspace')) {
+        textArea.value = textArea.value.split('').splice(0, textArea.value.length - 1).join('');
     }
 
-    if(event.target.classList.contains('button-space')) {
-        let cursorStart = textArea.selectionStart
-        let cursorEnd = textArea.value.length - cursorStart
-        let text = textArea.value
-        text = text.split('').slice(0,cursorStart).join('') + ' ' + text.split('').slice(-cursorEnd).join('')
-        textArea.value = text
-        textArea.selectionStart = cursorStart
+    if (event.target.classList.contains('button-enter')) {
+        textArea.value = textArea.value + '\r\n';
     }
-    // textArea.focus()
+
+    if (event.target.classList.contains('button-tab')) {
+        textArea.value += '  ';
+    }
+
+    if (event.target.classList.contains('button-space')) {
+        textArea.value += ' ';
+    }
 });
 
 keyboard.addEventListener('mouseup', function (event) {
@@ -287,12 +385,16 @@ keyboard.addEventListener('mouseup', function (event) {
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'up');
 
-    if(event.target.classList.contains('button-shift')) {
+    if (event.target.classList.contains('button-shift')) {
         clickButtonShift(event.target, 'up');
-        isShiftPressed = !isShiftPressed
+        isShiftPressed = false;
     }
-});
 
+    if (event.target.classList.contains('button-alt')) {
+        isAltPressed = false;
+    }
+
+});
 
 
 
