@@ -1,0 +1,102 @@
+.keyboard {
+  margin: 0 auto;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+}
+
+.keyboard__line-one,
+.keyboard__line-two,
+.keyboard__line-three,
+.keyboard__line-four,
+.keyboard__line-five {
+  display: flex;
+  gap: 1vw;
+}
+
+.keyboard__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $color-button;
+  color: $color-button-text;
+  border-radius: 1vw;
+  height: 5vw;
+  font-size: 2vw;
+  flex-grow: 1;
+  cursor: pointer;
+  transition: all 0.1s;
+
+}
+
+.keyboard__button-sub1 {
+  font-size: 1.5vw;
+  width: 100%;
+  margin-left: 1rem;
+}
+
+.double-button {
+  flex-direction: column;
+}
+
+.backspace {
+  flex-grow: 2;
+}
+
+.button-space {
+  flex-grow: 10
+}
+
+.button-ctrl {
+  flex-grow: 2;
+}
+
+.button-shift:last-child,
+.button-up-arrow,
+.button-left-arrow,
+.button-right-arrow,
+.button-down-arrow {
+  flex-grow: 0;
+  width: 6vw;
+}
+
+.special-button {
+background: $color-special-button;
+color: $color-special-button-text;
+}
+
+.button-up-arrow,
+.button-left-arrow,
+.button-right-arrow,
+.button-down-arrow {
+  font-size: 0;
+}
+
+.button-up-arrow:before,
+.button-left-arrow:before,
+.button-right-arrow:before,
+.button-down-arrow:before {
+  font-size: 2vw;
+  font-weight: 900;
+}
+.button-up-arrow:before {
+  content: "↑";
+}
+
+.button-down-arrow:before {
+  content: "↓";
+}
+
+.button-right-arrow:before {
+  content: "→";
+}
+
+.button-left-arrow:before {
+  content: "←";
+}
+
+.keyboard__button_press {
+  background: $color-press-button;
+  transition: all 0.1s;
+}
