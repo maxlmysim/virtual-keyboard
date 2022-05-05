@@ -1,6 +1,6 @@
 import i18Obj from './key.js';
 
-function createButtons(line, from, to, keyList, specialButton = specialButtonList) {
+let createButtons = (line, from, to, keyList, specialButton = specialButtonList) => {
     for (let i = from; i < to; i++) {
         let button = document.createElement('div');
         button.className = 'keyboard__button';
@@ -34,22 +34,19 @@ function createButtons(line, from, to, keyList, specialButton = specialButtonLis
         button.textContent = keyList[i][0];
         line.append(button);
     }
-}
+};
 
-let specialButtonList = ['backspace', 'tab', 'ENTER', 'DEL', 'Ctrl', 'space', 'Shift', 'Caps Lock', 'up arrow', 'left arrow', 'down arrow', 'right arrow', 'Win', 'Alt'];
+let specialButtonList = ['backspace', 'tab', 'ENTER', 'DEL', 'Ctrl', 'space', 'Shift', 'Caps Lock', 'up arrow', 'left arrow', 'down arrow', 'right arrow', 'Win', 'Alt'],
+    isShiftPressed = false,
+    isAltPressed = false,
+    isCapsLock = false,
+    currentLang = localStorage.getItem('lang') || 'en',
+    listButtons = Array.from(document.querySelectorAll('[data-key-code]')),
+    positionCursor = 0,
+    keysLang = Object.entries(i18Obj[currentLang]),
+    keyboard = document.createElement('div'),
+    textArea = document.createElement('textarea');
 
-let isShiftPressed = false;
-let isAltPressed = false;
-let isCapsLock = false;
-let currentLang = localStorage.getItem('lang') || 'en';
-let listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
-let positionCursor = 0;
-
-
-let keysLang = Object.entries(i18Obj[currentLang]);
-let keyboard = document.createElement('div');
-
-let textArea = document.createElement('textarea');
 textArea.className = 'text-area';
 textArea.autofocus = true;
 textArea.placeholder = 'Чтобы сменить язык нажмите Alt+Shift';
@@ -75,7 +72,7 @@ function createKeyboard(lang) {
 
     let lineFive = document.createElement('div');
     lineFive.className = 'keyboard__line-five';
-    createButtons(lineFive, 55, 64, lang);
+    createButtons(lineFive, 55, 63, lang);
 
     keyboard.className = 'keyboard';
     keyboard.append(lineOne, lineTwo, lineThree, lineFour, lineFive);
@@ -88,6 +85,9 @@ createKeyboard(keysLang);
 function clickButton(event, query) {
     if (query === 'down') {
         event.classList.add('keyboard__button_press');
+        if (event.classList.contains('button-alt')) {
+            console.log(document.querySelector('.button-ctrl'));
+        }
 
     }
 
@@ -269,6 +269,7 @@ window.addEventListener('keydown', function (event) {
                 inputText(item);
                 return true;
             }
+
         });
         listButtons.reverse();
     } else {
