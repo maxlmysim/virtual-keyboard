@@ -52,7 +52,7 @@ textArea.autofocus = true;
 textArea.placeholder = 'Чтобы сменить язык нажмите Alt+Shift';
 document.body.appendChild(textArea);
 
-function createKeyboard(lang) {
+let createKeyboard = (lang) => {
     keyboard.innerHTML = '';
     let lineOne = document.createElement('div');
     lineOne.className = 'keyboard__line-one';
@@ -78,26 +78,27 @@ function createKeyboard(lang) {
     keyboard.append(lineOne, lineTwo, lineThree, lineFour, lineFive);
     document.body.appendChild(keyboard);
     listButtons = Array.from(document.querySelectorAll('[data-key-code]'));
-}
+};
 
 createKeyboard(keysLang);
 
-function clickButton(event, query) {
+let clickButton = (event, query) => {
     if (query === 'down') {
         event.classList.add('keyboard__button_press');
         if (event.classList.contains('button-alt')) {
             console.log(document.querySelector('.button-ctrl'));
         }
-
     }
 
     if (query === 'up') {
         event.classList.remove('keyboard__button_press');
     }
+    textArea.selectionEnd = textArea.selectionStart = positionCursor;
     textArea.focus();
-}
 
-function clickButtonShift(event, query) {
+};
+
+let clickButtonShift = (event, query) => {
     if (query === 'down') {
         listButtons.forEach(item => {
             if (item.classList.contains('double-button')) {
@@ -123,9 +124,9 @@ function clickButtonShift(event, query) {
             }
         });
     }
-}
+};
 
-function clickButtonCapsLock(event, query) {
+let clickButtonCapsLock = (event, query) => {
     if (query === 'down') {
         listButtons.forEach(item => {
             if (item.classList.contains('keyboard__button') &&
@@ -145,14 +146,14 @@ function clickButtonCapsLock(event, query) {
             }
         });
     }
-}
+};
 
-function inputTextToTextarea(value) {
+let inputTextToTextarea = (value) => {
     textArea.value = textArea.value.slice(0, positionCursor) + value + textArea.value.slice(positionCursor, textArea.value.length);
     positionCursor++;
-}
+};
 
-function inputText(event) {
+let inputText = (event) => {
     if (event.classList.contains('button-down-arrow')) {
         inputTextToTextarea('↓');
         return;
@@ -179,9 +180,9 @@ function inputText(event) {
     if (event.classList.contains('keyboard__button')) {
         inputTextToTextarea(event.textContent);
     }
-}
+};
 
-function changeLang(side) {
+let changeLang = (side) => {
     if (isAltPressed && isShiftPressed) {
         if (currentLang === 'en') {
             currentLang = 'ru';
@@ -208,7 +209,6 @@ function changeLang(side) {
                     return true;
                 }
             });
-
             listButtons.reverse();
             return;
         }
@@ -219,13 +219,12 @@ function changeLang(side) {
                 return true;
             }
         });
-
     }
 
     localStorage.setItem('lang', currentLang);
-}
+};
 
-window.addEventListener('keydown', function (event) {
+window.addEventListener('keydown', (event) => {
     event.preventDefault();
     if (event.key === 'ArrowLeft') {
         if (positionCursor === 0) return;
@@ -238,6 +237,7 @@ window.addEventListener('keydown', function (event) {
         positionCursor++;
         textArea.selectionEnd = textArea.selectionStart = positionCursor;
     }
+
     if (event.key === 'Shift') {
         if (isCapsLock) {
             clickButtonShift(event.target, 'up');
@@ -269,7 +269,6 @@ window.addEventListener('keydown', function (event) {
                 inputText(item);
                 return true;
             }
-
         });
         listButtons.reverse();
     } else {
@@ -281,7 +280,6 @@ window.addEventListener('keydown', function (event) {
             }
         });
     }
-
 
     if (event.key === 'Enter') {
         inputTextToTextarea('\r\n');
@@ -316,11 +314,9 @@ window.addEventListener('keydown', function (event) {
         textArea.value = textArea.value.slice(0, positionCursor - 1) + textArea.value.slice(positionCursor, textArea.value.length);
         positionCursor--;
     }
-    console.log(event.code);
 });
 
-window.addEventListener('keyup', function (event) {
-    textArea.selectionEnd = textArea.selectionStart = positionCursor;
+window.addEventListener('keyup', (event) => {
 
     if (event.code === 'AltRight' ||
         event.code === 'ControlRight' ||
@@ -328,7 +324,6 @@ window.addEventListener('keyup', function (event) {
         listButtons.reverse().find(item => {
             if (+item.dataset.keyCode === event.keyCode) {
                 clickButton(item, 'up');
-                inputText(item);
                 return true;
             }
         });
@@ -337,7 +332,6 @@ window.addEventListener('keyup', function (event) {
         listButtons.find(item => {
             if (+item.dataset.keyCode === event.keyCode) {
                 clickButton(item, 'up');
-                inputText(item);
                 return true;
             }
         });
@@ -358,8 +352,7 @@ window.addEventListener('keyup', function (event) {
     }
 });
 
-keyboard.addEventListener('mousedown', function (event, handler) {
-
+keyboard.addEventListener('mousedown', (event, handler) => {
     if (!event.target.classList.contains('special-button')) {
         event.path.find(item => {
             if (item instanceof Element)
@@ -384,7 +377,6 @@ keyboard.addEventListener('mousedown', function (event, handler) {
 
     if (!event.target.classList.contains('keyboard__button')) return;
     clickButton(event.target, 'down');
-
 
     if (event.target.classList.contains('button-shift')) {
         if (isCapsLock) {
@@ -435,7 +427,7 @@ keyboard.addEventListener('mousedown', function (event, handler) {
     }
 });
 
-keyboard.addEventListener('mouseup', function (event) {
+keyboard.addEventListener('mouseup', (event) => {
     textArea.selectionEnd = textArea.selectionStart = positionCursor;
 
     if (event.target.classList.contains('keyboard__button-sub')) {
@@ -469,7 +461,6 @@ keyboard.addEventListener('mouseup', function (event) {
         positionCursor++;
         textArea.selectionEnd = textArea.selectionStart = positionCursor;
     }
-
 });
 
 
