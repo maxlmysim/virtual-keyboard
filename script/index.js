@@ -85,9 +85,6 @@ createKeyboard(keysLang);
 let clickButton = (event, query) => {
     if (query === 'down') {
         event.classList.add('keyboard__button_press');
-        if (event.classList.contains('button-alt')) {
-            console.log(document.querySelector('.button-ctrl'));
-        }
     }
 
     if (query === 'up') {
