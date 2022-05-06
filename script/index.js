@@ -352,7 +352,7 @@ window.addEventListener('keyup', (event) => {
     }
 });
 
-keyboard.addEventListener('mousedown', (event, handler) => {
+keyboard.addEventListener('mousedown', (event) => {
     if (!event.target.classList.contains('special-button')) {
         event.path.find(item => {
             if (item instanceof Element)
