@@ -431,7 +431,7 @@ keyboard.addEventListener('mousedown', (event) => {
 
   if (event.target.classList.contains('button-shift')) {
     if (isCapsLock) {
-      clickButtonShift(event.target, 'up');
+      clickButtonShift(event.target, 'up', 'hide');
     } else {
       clickButtonShift(event.target, 'down');
     }
@@ -504,7 +504,7 @@ keyboard.addEventListener('mouseup', (event) => {
 
   if (event.target.classList.contains('button-shift')) {
     if (isCapsLock) {
-      clickButtonShift(event.target, 'down');
+      clickButtonShift(event.target, 'down', 'unhide');
     } else {
       clickButtonShift(event.target, 'up');
     }
