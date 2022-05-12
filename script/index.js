@@ -95,7 +95,7 @@ let clickButton = (event, query) => {
 
 };
 
-let clickButtonShift = (event, query) => {
+let clickButtonShift = (event, query, doubleBtn) => {
     if (query === 'down') {
         listButtons.forEach(item => {
             if (item.classList.contains('double-button')) {
@@ -121,10 +121,27 @@ let clickButtonShift = (event, query) => {
             }
         });
     }
+
+    if (doubleBtn === 'unhide' && isCapsLock) {
+        listButtons.forEach(item => {
+            if (item.classList.contains('double-button')) {
+                item.lastChild.classList.remove('hidden');
+            }
+        });
+    }
+
+    if (doubleBtn === 'hide' && isCapsLock) {
+        listButtons.forEach(item => {
+            if (item.classList.contains('double-button')) {
+                item.lastChild.classList.add('hidden');
+            }
+        });
+    }
 };
 
 let clickButtonCapsLock = (event, query) => {
     if (query === 'down') {
+        console.log(1);
         listButtons.forEach(item => {
             if (item.classList.contains('keyboard__button') &&
                 !item.classList.contains('double-button') &&
@@ -191,12 +208,18 @@ let changeLang = (side) => {
             createKeyboard(keysLang);
         }
 
+        if(isCapsLock) {
+            clickButtonCapsLock(1, 'down');
+        }
+
         listButtons.find(item => {
             if (+item.dataset.keyCode === 18) {
                 clickButton(item, 'down');
                 return true;
             }
         });
+
+
 
         if (side === 'right') {
             listButtons.reverse();
@@ -218,6 +241,8 @@ let changeLang = (side) => {
         });
     }
 
+
+
     localStorage.setItem('lang', currentLang);
 };
 
@@ -237,7 +262,7 @@ window.addEventListener('keydown', (event) => {
 
     if (event.key === 'Shift') {
         if (isCapsLock) {
-            clickButtonShift(event.target, 'up');
+            clickButtonShift(event.target, 'up', 'hide');
         } else {
             clickButtonShift(event.target, 'down');
         }
@@ -336,7 +361,7 @@ window.addEventListener('keyup', (event) => {
 
     if (event.key === 'Shift') {
         if (isCapsLock) {
-            clickButtonShift(event.target, 'down');
+            clickButtonShift(event.target, 'down', 'unhide');
         } else {
             clickButtonShift(event.target, 'up');
         }
@@ -344,7 +369,6 @@ window.addEventListener('keyup', (event) => {
     }
 
     if (event.key === 'Alt') {
-        clickButtonShift(event.target, 'up');
         isAltPressed = false;
     }
 });
@@ -366,6 +390,7 @@ keyboard.addEventListener('mousedown', (event) => {
                 }
         });
     }
+
 
     if (event.target.classList.contains('keyboard__button-sub')) {
         clickButton(event.target.parentNode, 'down');
@@ -422,6 +447,15 @@ keyboard.addEventListener('mousedown', (event) => {
     if (event.target.classList.contains('button-space')) {
         inputTextToTextarea(' ');
     }
+
+    if (event.target.classList.contains('button-down-arrow')) {
+        inputTextToTextarea('↓');
+    }
+
+    if (event.target.classList.contains('button-up-arrow')) {
+        inputTextToTextarea('↑');
+    }
+
 });
 
 keyboard.addEventListener('mouseup', (event) => {
